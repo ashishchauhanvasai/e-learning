@@ -1,17 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import axios from 'axios';
 import './index.css';
 import App from './App';
+import './App.css';
 import reportWebVitals from './reportWebVitals';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+// Auto-logout when the token is expired or invalid
+axios.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    const msg = err.response?.data?.message;
+    if (msg === 'Invalid token') {
+      localStorage.clear();
+      window.location.href = '/login';
+    }
+    return Promise.reject(err);
+  }
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+
 reportWebVitals();
